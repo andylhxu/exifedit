@@ -1,21 +1,21 @@
 import os, re, datetime, piexif, time
 
-DIR = './timedpngtojpg_new/'
+DIR = '../timedpngtojpg_todo/'
 
 
 def filenametotimestamp(filename):
-    regex = r"([0-9]+)_.*\.jpeg"
+    regex = r"([0-9]+)\.jpeg"
     matches = re.finditer(regex, filename, re.MULTILINE)
     timestamp=get_match(matches)
     if (not isinstance(timestamp, str)):
         return False, None
-
-    year = '20'+timestamp[0:2]
-    yearint = int(year)
-    month = int(timestamp[2:4])
-    day = int(timestamp[4:6])
-    dt = datetime.datetime(yearint, month, day, 0 , 0, 0)
-    return True, dt.timestamp()
+    return True, float(timestamp)
+    # year = '20'+timestamp[0:2]
+    # yearint = int(year)
+    # month = int(timestamp[2:4])
+    # day = int(timestamp[4:6])
+    # dt = datetime.datetime(yearint, month, day, 0 , 0, 0)
+    # return True, dt.timestamp()
 
 def get_match(matches):
     for matchNum, match in enumerate(matches, start=1):
@@ -29,13 +29,14 @@ def getModifiedTime(filename):
 
 def process_mmexport(filename):
     print('file '+filename)
+
     should_process, timestamp = filenametotimestamp(filename)
+#    should_process = ('jpg' in filename)
     if not should_process:
         return
-#    timestamp = getModifiedTime(filename)
+ #   timestamp = getModifiedTime(filename)
     print('attempting '+str(timestamp))
-    timeobj = time.ctime(float(timestamp)/1000)
-    timeobj = datetime.datetime.fromtimestamp(float(timestamp)/1000)
+    timeobj = datetime.datetime.fromtimestamp(timestamp)
 
     exif_data = piexif.load(DIR+filename)
  #   print(exif_data)
